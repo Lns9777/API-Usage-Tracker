@@ -1,21 +1,21 @@
-# API Tracker
+# llmapi-tracker
 
 ## What API Tracker Is
 
-API Tracker is a local-first API usage and cost observability tool. It records request volume, token usage, latency, status, and versioned pricing for models from providers such as OpenAI and Gemini.
+`llmapi-tracker` is a local-first API usage and cost observability platform for LLM applications. It records request counts, token usage, latency, errors, and versioned pricing for provider models such as OpenAI and Gemini.
 
-The project is built to keep data local by default. It stores usage and pricing in a local SQLite database and does not persist prompts, responses, or raw API keys in the application database.
+The project is designed to keep data local by default. It stores usage and pricing in a local SQLite database and does not persist prompts, responses, or raw API keys in the application database.
 
 ## Features
 
 - Local FastAPI backend with SQLite storage
 - Versioned pricing records for historical cost tracking
 - Usage capture for input, output, thinking, cached, and total tokens
-- Cost calculation per request and across analytics views
+- Request-level and analytics-level cost calculation
 - React + Vite dashboard for usage, analytics, providers, models, and pricing
 - SDK wrappers for OpenAI and Gemini
 - Packaged launcher command that starts the local app and opens the browser
-- Open-source repository setup with tests, CI, and release automation
+- Open-source repository with tests, CI, and release automation
 
 ## Installation
 
@@ -36,10 +36,16 @@ npm install
 
 ### Package install
 
-If you install this project as a package, the launcher command is:
+```bash
+pip install llmapi-tracker
+```
+
+If you want optional provider SDK support:
 
 ```bash
-api-tracker
+pip install "llmapi-tracker[openai]"
+pip install "llmapi-tracker[gemini]"
+pip install "llmapi-tracker[all]"
 ```
 
 ## Starting the Application
@@ -59,7 +65,7 @@ npm run dev
 
 ### Packaged app
 
-After building the frontend assets and packaging them into the backend static directory, run:
+After the frontend assets are built and packaged into the backend static directory:
 
 ```bash
 api-tracker
@@ -73,7 +79,7 @@ The launcher starts the backend server and opens the browser to the local dashbo
 
 ```python
 import os
-from sdk.api_tracker import APITracker
+from api_tracker import APITracker
 
 tracker = APITracker(
     project="Pharmacy-AI",
@@ -172,7 +178,7 @@ python scripts/verify_frontend_assets.py
 
 ## Contributing
 
-This repository is intended to be open source and contributor friendly.
+`llmapi-tracker` is intended to be open source and contributor friendly.
 
 Contribution files:
 
@@ -192,5 +198,5 @@ Contribution expectations:
 
 ## License
 
-API Tracker is released under the MIT License. See [`LICENSE`](L:/Personal/APITracker/LICENSE).
+`llmapi-tracker` is released under the MIT License. See [`LICENSE`](L:/Personal/APITracker/LICENSE).
 
