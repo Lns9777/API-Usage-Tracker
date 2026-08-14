@@ -3,7 +3,6 @@ __pycache__
 node_modules
 .env
 api_tracker.db
-api_tracker/
 backend/app/static/
 frontend/dist/
 
