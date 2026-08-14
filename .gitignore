@@ -3,8 +3,8 @@ __pycache__
 node_modules
 .env
 api_tracker.db
-backend/app/static/
-frontend/dist/
+# backend/app/static/
+# frontend/dist/
 
 # Python
 __pycache__/
@@ -27,7 +27,7 @@ env/
 
 # Packaging
 build/
-dist/
+# dist/
 *.egg-info/
 
 # Local database
