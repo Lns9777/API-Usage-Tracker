@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime,timezone
 from typing import Any
 
 from sqlalchemy.orm import Session
@@ -76,7 +76,8 @@ def create_usage(db: Session, payload: dict[str, Any]) -> ApiUsage:
     project = _get_or_create_project(db, payload["project"])
     provider = _get_or_create_provider(db, payload["provider"])
     model = _get_or_create_model(db, provider.id, payload["model"])
-    timestamp = payload.get("timestamp") or datetime.utcnow()
+    # timestamp = payload.get("timestamp") or datetime.utcnow()
+    timestamp = payload.get("timestamp") or datetime.now(timezone.utc)
     pricing = get_applicable_pricing(db, model.id, timestamp)
     snapshot = PricingSnapshot(
         input_price_per_1m=getattr(pricing, "input_price_per_1m", 0.0),

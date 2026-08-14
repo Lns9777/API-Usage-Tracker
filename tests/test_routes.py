@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime,timezone
 
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
@@ -71,7 +71,8 @@ def test_pricing_and_usage_endpoints():
             "thinking_price_per_1m": 3.0,
             "cached_input_price_per_1m": 4.0,
             "currency": "USD",
-            "effective_from": datetime.utcnow().isoformat(),
+            # "effective_from": datetime.utcnow().isoformat(),
+            "effective_from": datetime.now(timezone.utc).isoformat(),
             "effective_to": None,
         },
     )
@@ -86,7 +87,8 @@ def test_pricing_and_usage_endpoints():
             "output_tokens": 1000000,
             "thinking_tokens": 1000000,
             "cached_tokens": 1000000,
-            "timestamp": datetime.utcnow().isoformat(),
+            # "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
         },
     )
     assert usage.status_code == 200
