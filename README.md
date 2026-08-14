@@ -1,19 +1,31 @@
 # API Tracker
 
-API Tracker is a local-first API usage and cost observability platform. It tracks request counts, token usage, latency, errors, and versioned pricing for providers such as OpenAI and Gemini.
+API Tracker is a local-first API usage and cost observability app. It tracks requests, token usage, latency, errors, and versioned pricing for provider models such as OpenAI and Gemini.
 
-## Principles
+## Core Principles
 
 - Local storage by default
 - No prompts or responses stored
 - No raw API keys stored
-- Historical pricing is preserved with versioned records
+- Pricing is versioned and preserved historically
 - Tracking failures never break provider calls
+
+## Features
+
+- FastAPI backend with SQLite storage
+- Versioned pricing records
+- Usage capture for input, output, thinking, and cached tokens
+- Cost calculation per request
+- Analytics overview and per-dimension breakdowns
+- React + Vite dashboard
+- Provider, model, and pricing management pages
+- Python SDK for OpenAI and Gemini adapters
+- Backend and frontend test coverage
 
 ## Repository Layout
 
 ```text
-api-tracker/
+APITracker/
 ├── backend/
 │   └── app/
 │       ├── main.py
@@ -21,8 +33,7 @@ api-tracker/
 │       ├── models.py
 │       ├── schemas.py
 │       ├── routes/
-│       ├── services/
-│       └── repositories/
+│       └── services/
 ├── frontend/
 │   └── src/
 │       ├── components/
@@ -43,21 +54,47 @@ api-tracker/
 └── README.md
 ```
 
-## What It Includes
+## Backend API
 
-- FastAPI backend
-- SQLAlchemy data model
-- SQLite local storage by default
-- Versioned pricing and historical cost calculation
-- Python SDK with OpenAI and Gemini adapters
-- React + Vite dashboard
-- Local-only request filtering and inspection
-- Backend and frontend tests
-- Docker support
+The backend exposes these main routes:
+
+- `GET /`
+- `GET /health`
+- `GET /projects`
+- `GET /usage`
+- `GET /usage/{usage_id}`
+- `GET /pricing`
+- `POST /pricing`
+- `PUT /pricing/{pricing_id}`
+- `DELETE /pricing/{pricing_id}`
+- `GET /providers`
+- `POST /providers`
+- `GET /models`
+- `POST /models`
+- `GET /analytics/overview`
+- `GET /analytics/cost`
+- `GET /analytics/tokens`
+- `GET /analytics/latency`
+- `GET /analytics/errors`
+- `GET /analytics/by-project`
+- `GET /analytics/by-provider`
+- `GET /analytics/by-model`
+
+## Frontend Pages
+
+- Overview
+- Projects
+- Usage
+- Analytics
+- Providers
+- Models
+- Pricing
+- Errors
+- Settings
 
 ## Environment
 
-Copy `.env.example` to `.env` if needed. The default values are local-first.
+Copy `.env.example` to `.env` and adjust values as needed.
 
 ```bash
 DATABASE_URL=sqlite:///./api_tracker.db
@@ -67,7 +104,13 @@ VITE_API_BASE_URL=http://localhost:8000
 TRACKER_BACKEND_URL=http://localhost:8000
 ```
 
-## Install
+Notes:
+
+- `DATABASE_URL` defaults to local SQLite
+- API keys are only used by the SDK at runtime
+- No secrets are intended to be stored in the app database
+
+## Installation
 
 ### Backend
 
@@ -84,7 +127,7 @@ cd frontend
 npm install
 ```
 
-## Run
+## Run Locally
 
 ### Backend
 
@@ -105,24 +148,7 @@ npm run dev
 docker compose up --build
 ```
 
-## Database
-
-The default database is local SQLite:
-
-- `api_tracker.db`
-
-Alembic scaffold:
-
-- `migrations/versions/0001_initial_schema.py`
-
-Commands:
-
-```bash
-alembic upgrade head
-alembic revision --autogenerate -m "describe change"
-```
-
-## SDK
+## SDK Usage
 
 ```python
 import os
@@ -154,28 +180,33 @@ response = tracker.gemini.generate(
 )
 ```
 
-The SDK automatically reads usage metadata from the provider response. Developers do not pass token counts or cost manually.
+The SDK reads usage metadata from the provider response and sends it to the local backend automatically.
 
 ## Pricing
 
-Pricing is stored centrally in the local database, with versioning via:
+Pricing is stored in the local database as versioned records.
 
+Each pricing row includes:
+
+- `model_id`
+- `input_price_per_1m`
+- `output_price_per_1m`
+- `thinking_price_per_1m`
+- `cached_input_price_per_1m`
+- `currency`
 - `effective_from`
 - `effective_to`
 
-Historical requests always use the pricing that was active when the request happened.
+Historical usage is resolved against the pricing row active at the request timestamp.
 
 ## Local-Only Policy
 
-By default the app:
+This app is intentionally local-first:
 
-- stores data locally
-- does not store prompts
-- does not store responses
-- does not store raw API keys
-- does not expose any secret-persistence UI
-
-If you change `DATABASE_URL`, that is an explicit deployment choice.
+- Usage data stays on the local backend unless you change the deployment target
+- Prompts and responses are not meant to be persisted
+- API keys are not stored in the database
+- Pricing and model metadata are stored locally for observability
 
 ## Testing
 
@@ -194,57 +225,51 @@ npm run test -- --run
 npm run build
 ```
 
-## Current Validation
+## Common Commands
 
-- Python syntax check: passed
-- Backend tests: passed
-- Frontend tests: passed
-- Frontend production build: passed
-
-## Current Limits
-
-- The dashboard uses lightweight charts instead of full charting libraries
-- The request inspector is a modal, not a split-pane workflow
-- The app is intentionally local-first, so team/shared deployment is not the default path
-
-## Current Commands Summary
-
-### Backend startup
+### Start backend
 
 ```bash
 uvicorn backend.app.main:app --reload
 ```
 
-### Frontend startup
+### Start frontend
 
 ```bash
 cd frontend
 npm run dev
 ```
 
-### Backend tests
+### Run backend tests
 
 ```bash
 pytest -q
 ```
 
-### Frontend tests
+### Run frontend tests
 
 ```bash
 cd frontend
 npm run test -- --run
 ```
 
-### Frontend build
+### Build frontend
 
 ```bash
 cd frontend
 npm run build
 ```
 
-### Docker
+### Run with Docker
 
 ```bash
 docker compose up --build
 ```
+
+## Notes
+
+- SQLite database file: `api_tracker.db`
+- Alembic migrations live in `migrations/`
+- The app currently uses a lightweight dashboard layout instead of a heavy charting stack
+- Cost totals can be very small, so some UI cards may need higher decimal precision than `toFixed(2)`
 
