@@ -1,8 +1,7 @@
-from .openai import OpenAITracker
 from .gemini import GeminiTracker
-
+from .openai import OpenAITracker
 
 __all__ = [
-    "OpenAITracker",
     "GeminiTracker",
+    "OpenAITracker",
 ]

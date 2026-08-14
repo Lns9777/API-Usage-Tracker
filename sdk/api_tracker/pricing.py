@@ -1,25 +1,19 @@
 PRICING = {
-
     "openai": {
-
         "gpt-5": {
             "input": 0.0,
             "output": 0.0,
             "thinking": 0.0,
             "cached": 0.0,
         },
-
     },
-
     "gemini": {
-
         "gemini-2.5-flash": {
             "input": 0.0,
             "output": 0.0,
             "thinking": 0.0,
             "cached": 0.0,
         },
-
     },
 }
 
@@ -47,28 +41,15 @@ def calculate_cost(
         },
     )
 
-    input_cost = (
-        input_tokens / 1_000_000
-    ) * model_data["input"]
+    input_cost = (input_tokens / 1_000_000) * model_data["input"]
 
-    output_cost = (
-        output_tokens / 1_000_000
-    ) * model_data["output"]
+    output_cost = (output_tokens / 1_000_000) * model_data["output"]
 
-    thinking_cost = (
-        thinking_tokens / 1_000_000
-    ) * model_data["thinking"]
+    thinking_cost = (thinking_tokens / 1_000_000) * model_data["thinking"]
 
-    cached_cost = (
-        cached_tokens / 1_000_000
-    ) * model_data["cached"]
+    cached_cost = (cached_tokens / 1_000_000) * model_data["cached"]
 
-    total_cost = (
-        input_cost
-        + output_cost
-        + thinking_cost
-        + cached_cost
-    )
+    total_cost = input_cost + output_cost + thinking_cost + cached_cost
 
     return {
         "input_cost": input_cost,

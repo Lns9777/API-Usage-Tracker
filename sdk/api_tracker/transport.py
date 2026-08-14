@@ -14,7 +14,9 @@ class TrackerTransport:
 
     def send_usage(self, usage: dict) -> bool:
         try:
-            response = requests.post(f"{self.endpoint}/usage", json=usage, timeout=self.timeout)
+            response = requests.post(
+                f"{self.endpoint}/usage", json=usage, timeout=self.timeout
+            )
             if not response.ok:
                 print("Usage payload:", usage)
                 print("Backend response:", response.status_code, response.text)

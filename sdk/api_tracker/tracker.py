@@ -10,7 +10,9 @@ logger = logging.getLogger(__name__)
 
 
 class Tracker:
-    def __init__(self, project: str, provider: str, backend_url: str = "http://localhost:8000"):
+    def __init__(
+        self, project: str, provider: str, backend_url: str = "http://localhost:8000"
+    ):
         self.project = project
         self.provider = provider
         self.transport = TrackerTransport(backend_url)

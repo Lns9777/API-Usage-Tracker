@@ -8,14 +8,20 @@ from ..tracker import Tracker
 
 
 class OpenAITracker:
-    def __init__(self, api_key: str, project: str, backend_url: str = "http://localhost:8000"):
+    def __init__(
+        self, api_key: str, project: str, backend_url: str = "http://localhost:8000"
+    ):
         self.client = OpenAI(api_key=api_key)
-        self.tracker = Tracker(project=project, provider="openai", backend_url=backend_url)
+        self.tracker = Tracker(
+            project=project, provider="openai", backend_url=backend_url
+        )
 
     def chat(self, model: str, messages: list, **kwargs):
         start = time.perf_counter()
         try:
-            response = self.client.chat.completions.create(model=model, messages=messages, **kwargs)
+            response = self.client.chat.completions.create(
+                model=model, messages=messages, **kwargs
+            )
             latency_ms = (time.perf_counter() - start) * 1000
             usage = getattr(response, "usage", None)
             self.tracker.record(
@@ -32,5 +38,10 @@ class OpenAITracker:
             return response
         except Exception as exc:
             latency_ms = (time.perf_counter() - start) * 1000
-            self.tracker.record(model=model, latency_ms=latency_ms, status="error", error_type=type(exc).__name__)
+            self.tracker.record(
+                model=model,
+                latency_ms=latency_ms,
+                status="error",
+                error_type=type(exc).__name__,
+            )
             raise
