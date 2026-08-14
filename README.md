@@ -1,158 +1,79 @@
 # API Tracker
 
-API Tracker is a local-first API usage and cost observability app. It tracks requests, token usage, latency, errors, and versioned pricing for provider models such as OpenAI and Gemini.
+## What API Tracker Is
 
-## Core Principles
+API Tracker is a local-first API usage and cost observability tool. It records request volume, token usage, latency, status, and versioned pricing for models from providers such as OpenAI and Gemini.
 
-- Local storage by default
-- No prompts or responses stored
-- No raw API keys stored
-- Pricing is versioned and preserved historically
-- Tracking failures never break provider calls
+The project is built to keep data local by default. It stores usage and pricing in a local SQLite database and does not persist prompts, responses, or raw API keys in the application database.
 
 ## Features
 
-- FastAPI backend with SQLite storage
-- Versioned pricing records
-- Usage capture for input, output, thinking, and cached tokens
-- Cost calculation per request
-- Analytics overview and per-dimension breakdowns
-- React + Vite dashboard
-- Provider, model, and pricing management pages
-- Python SDK for OpenAI and Gemini adapters
-- Backend and frontend test coverage
-
-## Repository Layout
-
-```text
-APITracker/
-├── backend/
-│   └── app/
-│       ├── main.py
-│       ├── database.py
-│       ├── models.py
-│       ├── schemas.py
-│       ├── routes/
-│       └── services/
-├── frontend/
-│   └── src/
-│       ├── components/
-│       ├── hooks/
-│       ├── layouts/
-│       ├── pages/
-│       ├── services/
-│       ├── types/
-│       └── utils/
-├── sdk/
-│   └── api_tracker/
-├── migrations/
-├── tests/
-├── .env.example
-├── docker-compose.yml
-├── Dockerfile.backend
-├── Dockerfile.frontend
-└── README.md
-```
-
-## Backend API
-
-The backend exposes these main routes:
-
-- `GET /`
-- `GET /health`
-- `GET /projects`
-- `GET /usage`
-- `GET /usage/{usage_id}`
-- `GET /pricing`
-- `POST /pricing`
-- `PUT /pricing/{pricing_id}`
-- `DELETE /pricing/{pricing_id}`
-- `GET /providers`
-- `POST /providers`
-- `GET /models`
-- `POST /models`
-- `GET /analytics/overview`
-- `GET /analytics/cost`
-- `GET /analytics/tokens`
-- `GET /analytics/latency`
-- `GET /analytics/errors`
-- `GET /analytics/by-project`
-- `GET /analytics/by-provider`
-- `GET /analytics/by-model`
-
-## Frontend Pages
-
-- Overview
-- Projects
-- Usage
-- Analytics
-- Providers
-- Models
-- Pricing
-- Errors
-- Settings
-
-## Environment
-
-Copy `.env.example` to `.env` and adjust values as needed.
-
-```bash
-DATABASE_URL=sqlite:///./api_tracker.db
-OPENAI_API_KEY=
-GEMINI_API_KEY=
-VITE_API_BASE_URL=http://localhost:8000
-TRACKER_BACKEND_URL=http://localhost:8000
-```
-
-Notes:
-
-- `DATABASE_URL` defaults to local SQLite
-- API keys are only used by the SDK at runtime
-- No secrets are intended to be stored in the app database
+- Local FastAPI backend with SQLite storage
+- Versioned pricing records for historical cost tracking
+- Usage capture for input, output, thinking, cached, and total tokens
+- Cost calculation per request and across analytics views
+- React + Vite dashboard for usage, analytics, providers, models, and pricing
+- SDK wrappers for OpenAI and Gemini
+- Packaged launcher command that starts the local app and opens the browser
+- Open-source repository setup with tests, CI, and release automation
 
 ## Installation
 
-### Backend
+### Prerequisites
+
+- Python 3.10 or newer
+- Node.js 20 or newer for frontend development
+
+### Local development install
 
 ```bash
 python -m venv .venv
 .venv\Scripts\activate
 pip install -r requirements.txt
-```
-
-### Frontend
-
-```bash
 cd frontend
 npm install
 ```
 
-## Run Locally
+### Package install
 
-### Backend
+If you install this project as a package, the launcher command is:
+
+```bash
+api-tracker
+```
+
+## Starting the Application
+
+### Backend only
 
 ```bash
 uvicorn backend.app.main:app --reload
 ```
 
-### Frontend
+### Frontend only
 
 ```bash
 cd frontend
 npm run dev
 ```
 
-### Docker
+### Packaged app
+
+After building the frontend assets and packaging them into the backend static directory, run:
 
 ```bash
-docker compose up --build
+api-tracker
 ```
+
+The launcher starts the backend server and opens the browser to the local dashboard.
 
 ## SDK Usage
 
+### Initialize the SDK
+
 ```python
 import os
-from api_tracker import APITracker
+from sdk.api_tracker import APITracker
 
 tracker = APITracker(
     project="Pharmacy-AI",
@@ -182,33 +103,48 @@ response = tracker.gemini.generate(
 
 The SDK reads usage metadata from the provider response and sends it to the local backend automatically.
 
-## Pricing
+## Database Location
 
-Pricing is stored in the local database as versioned records.
+By default, the SQLite database is stored in a stable user data directory so it survives uninstall and reinstall.
 
-Each pricing row includes:
+The path is resolved in this order:
 
-- `model_id`
-- `input_price_per_1m`
-- `output_price_per_1m`
-- `thinking_price_per_1m`
-- `cached_input_price_per_1m`
-- `currency`
-- `effective_from`
-- `effective_to`
+1. `API_TRACKER_DB_PATH` if set
+2. `DATABASE_URL` if set
+3. A user-data location based on the operating system
 
-Historical usage is resolved against the pricing row active at the request timestamp.
+Typical defaults:
 
-## Local-Only Policy
+- Windows: `%LOCALAPPDATA%\\APITracker\\api_tracker.db`
+- macOS/Linux: `~/.local/share/APITracker/api_tracker.db`
 
-This app is intentionally local-first:
+If the preferred user-data directory cannot be created, the app falls back to a writable local `.api-tracker-data/` directory in the current workspace.
 
-- Usage data stays on the local backend unless you change the deployment target
-- Prompts and responses are not meant to be persisted
-- API keys are not stored in the database
-- Pricing and model metadata are stored locally for observability
+## Configuration
 
-## Testing
+Environment variables:
+
+```bash
+DATABASE_URL=sqlite:///./api_tracker.db
+API_TRACKER_DATA_DIR=
+API_TRACKER_DB_PATH=
+API_TRACKER_HOST=127.0.0.1
+API_TRACKER_PORT=8000
+API_TRACKER_OPEN_BROWSER=true
+OPENAI_API_KEY=
+GEMINI_API_KEY=
+TRACKER_BACKEND_URL=http://localhost:8000
+VITE_API_BASE_URL=http://localhost:8000
+```
+
+Notes:
+
+- `DATABASE_URL` overrides the database connection string
+- `API_TRACKER_DATA_DIR` sets the user-data root used for SQLite storage
+- `API_TRACKER_DB_PATH` points directly to a specific SQLite file
+- `API_TRACKER_OPEN_BROWSER=false` disables browser auto-open for the launcher
+
+## Development Setup
 
 ### Backend
 
@@ -221,55 +157,40 @@ pytest -q
 
 ```bash
 cd frontend
-npm run test -- --run
 npm run build
 ```
 
-## Common Commands
-
-### Start backend
-
-```bash
-uvicorn backend.app.main:app --reload
-```
-
-### Start frontend
-
-```bash
-cd frontend
-npm run dev
-```
-
-### Run backend tests
-
-```bash
-pytest -q
-```
-
-### Run frontend tests
-
-```bash
-cd frontend
-npm run test -- --run
-```
-
-### Build frontend
+### Packaging assets
 
 ```bash
 cd frontend
 npm run build
+cd ..
+python scripts/package_frontend_assets.py
+python scripts/verify_frontend_assets.py
 ```
 
-### Run with Docker
+## Contributing
 
-```bash
-docker compose up --build
-```
+This repository is intended to be open source and contributor friendly.
 
-## Notes
+Contribution files:
 
-- SQLite database file: `api_tracker.db`
-- Alembic migrations live in `migrations/`
-- The app currently uses a lightweight dashboard layout instead of a heavy charting stack
-- Cost totals can be very small, so some UI cards may need higher decimal precision than `toFixed(2)`
+- [`CONTRIBUTING.md`](L:/Personal/APITracker/CONTRIBUTING.md)
+- [`CODE_OF_CONDUCT.md`](L:/Personal/APITracker/CODE_OF_CONDUCT.md)
+- [`SECURITY.md`](L:/Personal/APITracker/SECURITY.md)
+- [`CHANGELOG.md`](L:/Personal/APITracker/CHANGELOG.md)
+- [`LICENSE`](L:/Personal/APITracker/LICENSE)
+
+Contribution expectations:
+
+- Open changes through pull requests
+- Require review before merge
+- Keep the app local-first
+- Avoid storing prompts, responses, or raw API keys
+- Add tests for behavior changes
+
+## License
+
+API Tracker is released under the MIT License. See [`LICENSE`](L:/Personal/APITracker/LICENSE).
 

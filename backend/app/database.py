@@ -5,8 +5,9 @@ import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
+from .paths import get_database_url
 
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./api_tracker.db")
+DATABASE_URL = get_database_url()
 
 connect_args = {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
 
