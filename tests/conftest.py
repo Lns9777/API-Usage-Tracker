@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+# ruff: noqa: E402
 from backend.app.database import Base, get_db
 from backend.app.main import app
 

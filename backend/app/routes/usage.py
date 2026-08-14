@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from ..database import get_db
-from ..models import ApiUsage, Model, Project, Provider
+from ..models import ApiUsage
 from ..schemas import UsageDataIn, UsageResponse
 from ..services.usage_service import create_usage
 
