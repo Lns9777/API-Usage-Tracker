@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "llmapi-tracker"
-version = "1.0.4"
+version = "1.0.5"
 description = "Local-first API usage and cost tracking platform"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -60,7 +60,10 @@ packages = [
 
 [tool.setuptools.package-data]
 api_tracker = ["py.typed"]
-backend = ["app/static/**/*"]
+backend = [
+    "app/static/*",
+    "app/static/assets/*",
+]
 
 
 [tool.ruff]
