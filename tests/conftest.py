@@ -6,7 +6,6 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
-
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
@@ -14,7 +13,6 @@ if str(ROOT) not in sys.path:
 # ruff: noqa: E402
 from backend.app.database import Base, get_db
 from backend.app.main import app
-
 
 engine = create_engine(
     "sqlite://",

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 from fastapi import APIRouter
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles

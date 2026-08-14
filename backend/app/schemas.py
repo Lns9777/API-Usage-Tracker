@@ -1,14 +1,14 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
 
 class ProjectBase(BaseModel):
     name: str
-    description: Optional[str] = None
+    description: str | None = None
     environment: str = "development"
 
 
@@ -17,9 +17,9 @@ class ProjectCreate(ProjectBase):
 
 
 class ProjectUpdate(BaseModel):
-    name: Optional[str] = None
-    description: Optional[str] = None
-    environment: Optional[str] = None
+    name: str | None = None
+    description: str | None = None
+    environment: str | None = None
 
 
 class ProjectResponse(ProjectBase):
@@ -58,17 +58,17 @@ class PricingCreate(BaseModel):
     cached_input_price_per_1m: float = 0.0
     currency: str = "USD"
     effective_from: datetime
-    effective_to: Optional[datetime] = None
+    effective_to: datetime | None = None
 
 
 class PricingUpdate(BaseModel):
-    input_price_per_1m: Optional[float] = None
-    output_price_per_1m: Optional[float] = None
-    thinking_price_per_1m: Optional[float] = None
-    cached_input_price_per_1m: Optional[float] = None
-    currency: Optional[str] = None
-    effective_from: Optional[datetime] = None
-    effective_to: Optional[datetime] = None
+    input_price_per_1m: float | None = None
+    output_price_per_1m: float | None = None
+    thinking_price_per_1m: float | None = None
+    cached_input_price_per_1m: float | None = None
+    currency: str | None = None
+    effective_from: datetime | None = None
+    effective_to: datetime | None = None
 
 
 class PricingResponse(PricingCreate):
@@ -83,7 +83,7 @@ class UsageDataIn(BaseModel):
     provider: str
     model: str
     internal_request_id: str
-    provider_request_id: Optional[str] = None
+    provider_request_id: str | None = None
     input_tokens: int = 0
     output_tokens: int = 0
     thinking_tokens: int = 0
@@ -94,8 +94,8 @@ class UsageDataIn(BaseModel):
     request_count: int = 1
     latency_ms: float = 0.0
     status: str = "success"
-    http_status_code: Optional[int] = None
-    error_type: Optional[str] = None
+    http_status_code: int | None = None
+    error_type: str | None = None
     metadata: dict[str, Any] = Field(default_factory=dict)
     capture_content: bool = False
 
@@ -106,7 +106,7 @@ class UsageResponse(BaseModel):
     provider_id: int
     model_id: int
     internal_request_id: str
-    provider_request_id: Optional[str]
+    provider_request_id: str | None
     timestamp: datetime
     input_tokens: int
     output_tokens: int
@@ -123,8 +123,8 @@ class UsageResponse(BaseModel):
     request_count: int
     latency_ms: float
     status: str
-    http_status_code: Optional[int]
-    error_type: Optional[str]
+    http_status_code: int | None
+    error_type: str | None
     metadata_json: dict[str, Any]
     capture_content: bool
     model_config = ConfigDict(from_attributes=True)

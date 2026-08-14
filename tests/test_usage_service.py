@@ -1,10 +1,10 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from backend.app.database import Base
-from backend.app.models import ModelPricing, Project, Provider, Model
+from backend.app.models import Model, ModelPricing, Project, Provider
 from backend.app.services.usage_service import create_usage, get_applicable_pricing
 
 
@@ -31,8 +31,10 @@ def seed_pricing(db):
             thinking_price_per_1m=3.0,
             cached_input_price_per_1m=4.0,
             currency="USD",
-            effective_from=datetime(2026, 1, 1),
-            effective_to=datetime(2026, 6, 30),
+            # effective_from=datetime(2026, 1, 1),
+            effective_from=datetime(2026, 1, 1, tzinfo=timezone.utc),
+            # effective_to=datetime(2026, 6, 30),
+            effective_to=datetime(2026, 6, 30, tzinfo=timezone.utc),
         )
     )
     db.commit()
@@ -42,7 +44,12 @@ def seed_pricing(db):
 def test_get_applicable_pricing_returns_version_for_timestamp():
     db = make_session()
     model = seed_pricing(db)
-    pricing = get_applicable_pricing(db, model.id, datetime(2026, 3, 1))
+    # pricing = get_applicable_pricing(db, model.id, datetime(2026, 3, 1))
+    pricing = get_applicable_pricing(
+    db,
+    model.id,
+    datetime(2026, 3, 1, tzinfo=timezone.utc),
+)
     assert pricing is not None
     assert pricing.input_price_per_1m == 1.0
 
@@ -61,7 +68,8 @@ def test_create_usage_applies_pricing_snapshot():
             "output_tokens": 1_000_000,
             "thinking_tokens": 1_000_000,
             "cached_tokens": 1_000_000,
-            "timestamp": datetime(2026, 3, 1),
+            # "timestamp": datetime(2026, 3, 1),
+            "timestamp": datetime(2026, 3, 1, tzinfo=timezone.utc),
         },
     )
     assert usage.total_cost == 10.0

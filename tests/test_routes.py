@@ -1,4 +1,4 @@
-from datetime import datetime,timezone
+from datetime import datetime, timezone
 
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
@@ -7,7 +7,6 @@ from sqlalchemy.pool import StaticPool
 
 from backend.app.database import Base, get_db
 from backend.app.main import app
-
 
 engine = create_engine(
     "sqlite://",
