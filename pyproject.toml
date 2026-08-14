@@ -2,6 +2,7 @@
 requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
+
 [project]
 name = "llmapi-tracker"
 version = "1.0.2"
@@ -10,41 +11,73 @@ readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
 authors = [
-  { name = "API Tracker" }
+    { name = "API Tracker" }
 ]
+
 dependencies = [
-  "requests>=2.32",
-  "fastapi>=0.115",
-  "uvicorn[standard]>=0.30",
-  "sqlalchemy>=2.0",
-  "pydantic>=2.8",
+    "requests>=2.32",
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.30",
+    "sqlalchemy>=2.0",
+    "pydantic>=2.8",
 ]
+
 
 [project.urls]
 Homepage = "https://github.com/Lns9777/API-Usage-Tracker"
 Repository = "https://github.com/Lns9777/API-Usage-Tracker"
 Issues = "https://github.com/Lns9777/API-Usage-Tracker/issues"
 
+
 [project.optional-dependencies]
 openai = ["openai>=1.40"]
 gemini = ["google-genai>=0.7"]
 all = ["openai>=1.40", "google-genai>=0.7"]
-dev = ["pytest>=8.0", "httpx>=0.27", "ruff>=0.6", "build>=1.2", "twine>=5.1"]
+dev = [
+    "pytest>=8.0",
+    "httpx>=0.27",
+    "ruff>=0.6",
+    "build>=1.2",
+    "twine>=5.1",
+]
+
 
 [project.scripts]
 api-tracker = "backend.app.launcher:launch_app"
 
+
 [tool.setuptools]
-package-dir = {"backend" = "backend", "api_tracker" = "sdk/api_tracker"}
+package-dir = { "backend" = "backend", "api_tracker" = "sdk/api_tracker" }
 packages = [
-  "backend",
-  "backend.app",
-  "backend.app.routes",
-  "backend.app.services",
-  "api_tracker",
-  "api_tracker.providers",
+    "backend",
+    "backend.app",
+    "backend.app.routes",
+    "backend.app.services",
+    "api_tracker",
+    "api_tracker.providers",
 ]
+
 
 [tool.setuptools.package-data]
 api_tracker = ["py.typed"]
 backend = ["app/static/**/*"]
+
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+
+
+[tool.ruff.lint]
+select = [
+    "E",
+    "F",
+    "I",
+    "B",
+    "UP",
+    "RUF",
+    "DTZ",
+]
+ignore = [
+    "B008",
+]
