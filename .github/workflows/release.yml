@@ -18,6 +18,24 @@ jobs:
           python -m pip install --upgrade pip
           pip install build twine
           pip install -r requirements.txt
+
+      - name: Verify release tag matches package version
+        shell: bash
+        run: |
+          VERSION="$(python - <<'PY'
+          from pathlib import Path
+          import tomllib
+
+          data = tomllib.loads(Path("pyproject.toml").read_text(encoding="utf-8"))
+          print(data["project"]["version"])
+          PY
+          )"
+          TAG="${GITHUB_REF_NAME#v}"
+          if [ "$TAG" != "$VERSION" ]; then
+            echo "Release tag $TAG does not match pyproject.toml version $VERSION"
+            exit 1
+          fi
+
       - name: Build frontend assets
         run: |
           cd frontend
