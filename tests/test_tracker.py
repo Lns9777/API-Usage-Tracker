@@ -15,7 +15,9 @@ def test_tracker_records_usage(monkeypatch):
     dummy = DummyTransport()
     tracker.transport = dummy
 
-    usage = tracker.record(model="gpt-5", input_tokens=10, output_tokens=5, total_tokens=15)
+    usage = tracker.record(
+        model="gpt-5", input_tokens=10, output_tokens=5, total_tokens=15
+    )
 
     assert usage.total_tokens == 15
     assert dummy.sent[0]["model"] == "gpt-5"

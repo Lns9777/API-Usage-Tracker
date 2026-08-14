@@ -17,7 +17,10 @@ def list_models(db: Session = Depends(get_db)):
 def create_model(payload: ModelCreate, db: Session = Depends(get_db)):
     row = (
         db.query(Model)
-        .filter(Model.provider_id == payload.provider_id, Model.model_name == payload.model_name)
+        .filter(
+            Model.provider_id == payload.provider_id,
+            Model.model_name == payload.model_name,
+        )
         .first()
     )
     if row:

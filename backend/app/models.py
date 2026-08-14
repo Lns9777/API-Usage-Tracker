@@ -42,21 +42,29 @@ class Provider(Base):
     name = Column(String(100), unique=True, nullable=False, index=True)
     created_at = Column(DateTime, default=utcnow, nullable=False)
 
-    models = relationship("Model", back_populates="provider", cascade="all, delete-orphan")
+    models = relationship(
+        "Model", back_populates="provider", cascade="all, delete-orphan"
+    )
 
 
 class Model(Base):
     __tablename__ = "models"
-    __table_args__ = (UniqueConstraint("provider_id", "model_name", name="uq_provider_model_name"),)
+    __table_args__ = (
+        UniqueConstraint("provider_id", "model_name", name="uq_provider_model_name"),
+    )
 
     id = Column(Integer, primary_key=True, index=True)
-    provider_id = Column(Integer, ForeignKey("providers.id"), nullable=False, index=True)
+    provider_id = Column(
+        Integer, ForeignKey("providers.id"), nullable=False, index=True
+    )
     model_name = Column(String(150), nullable=False, index=True)
     model_type = Column(String(50), default="text", nullable=False)
     created_at = Column(DateTime, default=utcnow, nullable=False)
 
     provider = relationship("Provider", back_populates="models")
-    pricing = relationship("ModelPricing", back_populates="model", cascade="all, delete-orphan")
+    pricing = relationship(
+        "ModelPricing", back_populates="model", cascade="all, delete-orphan"
+    )
     usage = relationship("ApiUsage", back_populates="model_ref")
 
 
@@ -86,7 +94,9 @@ class ApiUsage(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     project_id = Column(Integer, ForeignKey("projects.id"), nullable=False, index=True)
-    provider_id = Column(Integer, ForeignKey("providers.id"), nullable=False, index=True)
+    provider_id = Column(
+        Integer, ForeignKey("providers.id"), nullable=False, index=True
+    )
     model_id = Column(Integer, ForeignKey("models.id"), nullable=False, index=True)
     internal_request_id = Column(String(255), nullable=False, unique=True, index=True)
     provider_request_id = Column(String(255), nullable=True, index=True)

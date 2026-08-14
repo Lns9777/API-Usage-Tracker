@@ -9,7 +9,9 @@ from backend.app.services.usage_service import create_usage, get_applicable_pric
 
 
 def make_session():
-    engine = create_engine("sqlite:///:memory:", connect_args={"check_same_thread": False})
+    engine = create_engine(
+        "sqlite:///:memory:", connect_args={"check_same_thread": False}
+    )
     Base.metadata.create_all(bind=engine)
     return sessionmaker(bind=engine)()
 

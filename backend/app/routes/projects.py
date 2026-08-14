@@ -34,7 +34,9 @@ def get_project(project_id: int, db: Session = Depends(get_db)):
 
 
 @router.put("/{project_id}", response_model=ProjectResponse)
-def update_project(project_id: int, project: ProjectUpdate, db: Session = Depends(get_db)):
+def update_project(
+    project_id: int, project: ProjectUpdate, db: Session = Depends(get_db)
+):
     row = db.query(Project).filter(Project.id == project_id).first()
     if not row:
         raise HTTPException(status_code=404, detail="Project not found")

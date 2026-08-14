@@ -1,4 +1,3 @@
-
 from backend.app import paths
 
 
@@ -12,7 +11,10 @@ def test_database_path_uses_explicit_overrides(monkeypatch, tmp_path):
 
     assert paths.get_data_dir() == data_dir
     assert paths.get_database_path() == data_dir / "api_tracker.db"
-    assert paths.get_database_url() == f"sqlite:///{(data_dir / 'api_tracker.db').as_posix()}"
+    assert (
+        paths.get_database_url()
+        == f"sqlite:///{(data_dir / 'api_tracker.db').as_posix()}"
+    )
 
     monkeypatch.setenv("API_TRACKER_DB_PATH", str(db_path))
     assert paths.get_database_path() == db_path

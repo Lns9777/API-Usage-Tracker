@@ -46,13 +46,18 @@ def _get_or_create_model(db: Session, provider_id: int, model_name: str) -> Mode
     return model
 
 
-def get_applicable_pricing(db: Session, model_id: int, timestamp: datetime) -> ModelPricing | None:
+def get_applicable_pricing(
+    db: Session, model_id: int, timestamp: datetime
+) -> ModelPricing | None:
     pricing = (
         db.query(ModelPricing)
         .filter(
             ModelPricing.model_id == model_id,
             ModelPricing.effective_from <= timestamp,
-            ((ModelPricing.effective_to.is_(None)) | (ModelPricing.effective_to >= timestamp)),
+            (
+                (ModelPricing.effective_to.is_(None))
+                | (ModelPricing.effective_to >= timestamp)
+            ),
         )
         .order_by(ModelPricing.effective_from.desc())
         .first()

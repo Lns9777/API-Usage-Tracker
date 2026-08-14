@@ -23,7 +23,9 @@ def list_pricing(db: Session = Depends(get_db)):
 
 
 @router.put("/{pricing_id}", response_model=PricingResponse)
-def update_pricing(pricing_id: int, pricing: PricingUpdate, db: Session = Depends(get_db)):
+def update_pricing(
+    pricing_id: int, pricing: PricingUpdate, db: Session = Depends(get_db)
+):
     row = db.query(ModelPricing).filter(ModelPricing.id == pricing_id).first()
     if not row:
         raise HTTPException(status_code=404, detail="Pricing not found")

@@ -36,7 +36,9 @@ def teardown_module():
 
 def test_project_crud():
     client = TestClient(app)
-    response = client.post("/projects", json={"name": "alpha", "description": "A", "environment": "dev"})
+    response = client.post(
+        "/projects", json={"name": "alpha", "description": "A", "environment": "dev"}
+    )
     assert response.status_code == 200
     project_id = response.json()["id"]
 
@@ -52,7 +54,14 @@ def test_project_crud():
 def test_pricing_and_usage_endpoints():
     client = TestClient(app)
     provider = client.post("/providers", json={"name": "openai"}).json()
-    model = client.post("/models", json={"provider_id": provider["id"], "model_name": "gpt-5", "model_type": "text"}).json()
+    model = client.post(
+        "/models",
+        json={
+            "provider_id": provider["id"],
+            "model_name": "gpt-5",
+            "model_type": "text",
+        },
+    ).json()
     client.post(
         "/pricing",
         json={
