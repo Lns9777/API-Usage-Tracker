@@ -6,3 +6,34 @@ api_tracker.db
 api_tracker/
 backend/app/static/
 frontend/dist/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Environment / secrets
+.env
+
+# Testing
+.pytest_cache/
+
+# Ruff
+.ruff_cache/
+
+# Packaging
+build/
+dist/
+*.egg-info/
+
+# Local database
+*.db
+
+# IDE
+.vscode/
+.idea/
