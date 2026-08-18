@@ -1,30 +1,67 @@
-# llmapi-tracker
+<div align="center">
+
+# 📊 llmapi-tracker
+
+**A local-first API usage and cost observability platform for LLM applications**
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](#license)
+[![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](#prerequisites)
+[![Node](https://img.shields.io/badge/node-20%2B-green.svg)](#prerequisites)
+[![Local First](https://img.shields.io/badge/data-local--first-brightgreen.svg)](#what-api-tracker-is)
+
+</div>
+
+---
+
+## Table of Contents
+
+- [What API Tracker Is](#what-api-tracker-is)
+- [Features](#features)
+- [Installation](#installation)
+  - [Prerequisites](#prerequisites)
+  - [Local Development Install](#local-development-install)
+  - [Package Install](#package-install)
+- [Starting the Application](#starting-the-application)
+- [SDK Usage](#sdk-usage)
+- [Database Location](#database-location)
+- [Configuration](#configuration)
+- [Development Setup](#development-setup)
+- [Contributing](#contributing)
+- [License](#license)
+
+---
 
 ## What API Tracker Is
 
-`llmapi-tracker` is a local-first API usage and cost observability platform for LLM applications. It records request counts, token usage, latency, errors, and versioned pricing for provider models such as OpenAI and Gemini.
+`llmapi-tracker` is a **local-first API usage and cost observability platform** for LLM applications. It records request counts, token usage, latency, errors, and versioned pricing for provider models such as OpenAI and Gemini.
 
-The project is designed to keep data local by default. It stores usage and pricing in a local SQLite database and does not persist prompts, responses, or raw API keys in the application database.
+The project is designed to keep data local by default. It stores usage and pricing in a local SQLite database and **does not persist prompts, responses, or raw API keys** in the application database.
+
+---
 
 ## Features
 
-- Local FastAPI backend with SQLite storage
-- Versioned pricing records for historical cost tracking
-- Usage capture for input, output, thinking, cached, and total tokens
-- Request-level and analytics-level cost calculation
-- React + Vite dashboard for usage, analytics, providers, models, and pricing
-- SDK wrappers for OpenAI and Gemini
-- Packaged launcher command that starts the local app and opens the browser
-- Open-source repository with tests, CI, and release automation
+| Category | Capability |
+|---|---|
+| 🖥️ Backend | Local FastAPI backend with SQLite storage |
+| 💰 Pricing | Versioned pricing records for historical cost tracking |
+| 📈 Usage | Capture for input, output, thinking, cached, and total tokens |
+| 🧮 Cost | Request-level and analytics-level cost calculation |
+| 📊 Dashboard | React + Vite dashboard for usage, analytics, providers, models, and pricing |
+| 🔌 SDKs | Wrappers for OpenAI and Gemini |
+| 🚀 Launcher | Packaged launcher command that starts the local app and opens the browser |
+| 🧪 Quality | Open-source repository with tests, CI, and release automation |
+
+---
 
 ## Installation
 
 ### Prerequisites
 
-- Python 3.10 or newer
-- Node.js 20 or newer for frontend development
+- Python **3.10** or newer
+- Node.js **20** or newer for frontend development
 
-### Local development install
+### Local Development Install
 
 ```bash
 python -m venv .venv
@@ -34,13 +71,13 @@ cd frontend
 npm install
 ```
 
-### Package install
+### Package Install
 
 ```bash
 pip install llmapi-tracker
 ```
 
-If you want optional provider SDK support:
+Optional provider SDK support:
 
 ```bash
 pip install "llmapi-tracker[openai]"
@@ -48,22 +85,24 @@ pip install "llmapi-tracker[gemini]"
 pip install "llmapi-tracker[all]"
 ```
 
+---
+
 ## Starting the Application
 
-### Backend only
+### Backend Only
 
 ```bash
 uvicorn backend.app.main:app --reload
 ```
 
-### Frontend only
+### Frontend Only
 
 ```bash
 cd frontend
 npm run dev
 ```
 
-### Packaged app
+### Packaged App
 
 After the frontend assets are built and packaged into the backend static directory:
 
@@ -71,7 +110,9 @@ After the frontend assets are built and packaged into the backend static directo
 api-tracker
 ```
 
-The launcher starts the backend server and opens the browser to the local dashboard.
+> The launcher starts the backend server and opens the browser to the local dashboard.
+
+---
 
 ## SDK Usage
 
@@ -107,7 +148,9 @@ response = tracker.gemini.generate(
 )
 ```
 
-The SDK reads usage metadata from the provider response and sends it to the local backend automatically.
+> The SDK reads usage metadata from the provider response and sends it to the local backend automatically.
+
+---
 
 ## Database Location
 
@@ -119,16 +162,35 @@ The path is resolved in this order:
 2. `DATABASE_URL` if set
 3. A user-data location based on the operating system
 
-Typical defaults:
+**Typical defaults**
 
-- Windows: `%LOCALAPPDATA%\\APITracker\\api_tracker.db`
-- macOS/Linux: `~/.local/share/APITracker/api_tracker.db`
+| OS | Path |
+|---|---|
+| Windows | `%LOCALAPPDATA%\APITracker\api_tracker.db` |
+| macOS / Linux | `~/.local/share/APITracker/api_tracker.db` |
 
-If the preferred user-data directory cannot be created, the app falls back to a writable local `.api-tracker-data/` directory in the current workspace.
+> If the preferred user-data directory cannot be created, the app falls back to a writable local `.api-tracker-data/` directory in the current workspace.
+
+---
 
 ## Configuration
 
 Environment variables:
+
+| Variable | Description |
+|---|---|
+| `DATABASE_URL` | Overrides the database connection string |
+| `API_TRACKER_DATA_DIR` | Sets the user-data root used for SQLite storage |
+| `API_TRACKER_DB_PATH` | Points directly to a specific SQLite file |
+| `API_TRACKER_HOST` | Host the backend binds to (default `127.0.0.1`) |
+| `API_TRACKER_PORT` | Port the backend binds to (default `8000`) |
+| `API_TRACKER_OPEN_BROWSER` | Set to `false` to disable browser auto-open for the launcher |
+| `OPENAI_API_KEY` | API key used by the OpenAI SDK wrapper |
+| `GEMINI_API_KEY` | API key used by the Gemini SDK wrapper |
+| `TRACKER_BACKEND_URL` | Backend URL used by the SDK client |
+| `VITE_API_BASE_URL` | Backend URL used by the frontend dashboard |
+
+Example `.env`:
 
 ```bash
 DATABASE_URL=sqlite:///./api_tracker.db
@@ -143,12 +205,7 @@ TRACKER_BACKEND_URL=http://localhost:8000
 VITE_API_BASE_URL=http://localhost:8000
 ```
 
-Notes:
-
-- `DATABASE_URL` overrides the database connection string
-- `API_TRACKER_DATA_DIR` sets the user-data root used for SQLite storage
-- `API_TRACKER_DB_PATH` points directly to a specific SQLite file
-- `API_TRACKER_OPEN_BROWSER=false` disables browser auto-open for the launcher
+---
 
 ## Development Setup
 
@@ -166,7 +223,7 @@ cd frontend
 npm run build
 ```
 
-### Packaging assets
+### Packaging Assets
 
 ```bash
 cd frontend
@@ -176,11 +233,13 @@ python scripts/package_frontend_assets.py
 python scripts/verify_frontend_assets.py
 ```
 
+---
+
 ## Contributing
 
 `llmapi-tracker` is intended to be open source and contributor friendly.
 
-Contribution files:
+**Contribution files**
 
 - [`CONTRIBUTING.md`](L:/Personal/APITracker/CONTRIBUTING.md)
 - [`CODE_OF_CONDUCT.md`](L:/Personal/APITracker/CODE_OF_CONDUCT.md)
@@ -188,15 +247,16 @@ Contribution files:
 - [`CHANGELOG.md`](L:/Personal/APITracker/CHANGELOG.md)
 - [`LICENSE`](L:/Personal/APITracker/LICENSE)
 
-Contribution expectations:
+**Contribution expectations**
 
-- Open changes through pull requests
-- Require review before merge
-- Keep the app local-first
-- Avoid storing prompts, responses, or raw API keys
-- Add tests for behavior changes
+- ✅ Open changes through pull requests
+- ✅ Require review before merge
+- ✅ Keep the app local-first
+- 🚫 Avoid storing prompts, responses, or raw API keys
+- ✅ Add tests for behavior changes
+
+---
 
 ## License
 
-`llmapi-tracker` is released under the MIT License. See [`LICENSE`](L:/Personal/APITracker/LICENSE).
-
+`llmapi-tracker` is released under the **MIT License**. See [`LICENSE`](L:/Personal/APITracker/LICENSE).
