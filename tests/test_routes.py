@@ -92,6 +92,24 @@ def test_pricing_and_usage_endpoints():
     )
     assert usage.status_code == 200
     assert usage.json()["total_cost"] == 10.0
+    assert usage.json()["timestamp"].endswith("Z")
+
+
+def test_usage_preserves_client_timestamp():
+    client = TestClient(app)
+    timestamp = "2026-09-15T19:39:16+05:30"
+    response = client.post(
+        "/usage",
+        json={
+            "project": "timestamp-project",
+            "provider": "timestamp-provider",
+            "model": "timestamp-model",
+            "internal_request_id": "timestamp-request",
+            "timestamp": timestamp,
+        },
+    )
+    assert response.status_code == 200
+    assert response.json()["timestamp"] == "2026-09-15T14:09:16Z"
 
 
 def test_analytics_overview():

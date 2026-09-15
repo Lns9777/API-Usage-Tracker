@@ -76,8 +76,13 @@ def create_usage(db: Session, payload: dict[str, Any]) -> ApiUsage:
     project = _get_or_create_project(db, payload["project"])
     provider = _get_or_create_provider(db, payload["provider"])
     model = _get_or_create_model(db, provider.id, payload["model"])
-    # timestamp = payload.get("timestamp") or datetime.utcnow()
     timestamp = payload.get("timestamp") or datetime.now(timezone.utc)
+    # SQLite does not preserve timezone metadata. Normalize incoming values
+    # before using them for pricing and persistence so all records mean UTC.
+    if timestamp.tzinfo is None:
+        timestamp = timestamp.replace(tzinfo=timezone.utc)
+    else:
+        timestamp = timestamp.astimezone(timezone.utc)
     pricing = get_applicable_pricing(db, model.id, timestamp)
     snapshot = PricingSnapshot(
         input_price_per_1m=getattr(pricing, "input_price_per_1m", 0.0),

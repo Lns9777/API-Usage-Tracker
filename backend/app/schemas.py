@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_serializer
 
 
 class ProjectBase(BaseModel):
@@ -84,6 +84,8 @@ class UsageDataIn(BaseModel):
     model: str
     internal_request_id: str
     provider_request_id: str | None = None
+    # Timestamp of the provider request. If omitted, the ingestion time is used.
+    timestamp: datetime | None = None
     input_tokens: int = 0
     output_tokens: int = 0
     thinking_tokens: int = 0
@@ -128,3 +130,10 @@ class UsageResponse(BaseModel):
     metadata_json: dict[str, Any]
     capture_content: bool
     model_config = ConfigDict(from_attributes=True)
+
+    @field_serializer("timestamp")
+    def serialize_timestamp(self, value: datetime) -> str:
+        """Always expose stored timestamps as explicit UTC ISO-8601 values."""
+        if value.tzinfo is None:
+            value = value.replace(tzinfo=timezone.utc)
+        return value.astimezone(timezone.utc).isoformat().replace("+00:00", "Z")
